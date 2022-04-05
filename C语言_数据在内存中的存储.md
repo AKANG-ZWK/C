@@ -1,151 +1,67 @@
-## 调试技巧
+# C语言_进阶
 
-### 快捷键
+## 数据在内存中的存储
 
-- F5 ：调试    
-- F10： 逐过程调试    
-- F11：逐语句调试     
-- Ctrl + F5：直接运行不调试      
-- Shift + F5：结束调试
-- F9：添加断点，断点处右键，可以设置条件
+### 基本的数据类型
 
-### 窗口
+#### 整型家族
 
-**调用堆栈**：对于复杂代码，调用堆栈可以看清楚代码逻辑
+- char     一般情况下定义一个char，是否是有符号的，取决于编译器
+  - unsigned char
+  - signed char
+- short    短整型，int可以省略，一般情况下定义一个short，是有符号的
+  - unsigned short [int]  
+  - signed short [int]
+- int
+  - unsigned int
+  - signed int
+- long    长整型，int可以省略，一般情况下定义一个long，是有符号的
+  - unsigned long [int]
+  - signed long [int]  
 
-**内存监视**：可以查看变量在内存中的十六进制值
+#### 浮点数家族
 
-**监视**：可以添加变量，监视变量值的变化
+- float   单精度浮点数
+- double   双精度浮点数
 
-
-
-```c
-// 调试用例，刚开始不写 ret = 1 调试发现问题
-// 调试就是一步一步看代码运行，当程序调试时，内心得清楚代码下一步的结果，心中要有数
-
-int main()
-{
-	int n = 0;
-	scanf("%d", &n);
-
-	int ret = 1;
-	int i = 0;
-	int j = 0;
-	int sum = 0;
-
-	for (j = 1; j <= n; j++)
-	{
-		ret = 1;
-		for (i = 1; i <= j; i++)
-		{
-			ret *= i;
-		}
-		sum += ret;
-	}
-
-	printf("sum = %d", sum);
-
-	return 0;
-}
-```
-
-### 一个错误程序
+#### 构造类型
 
 ```c
-/*内存划分:  栈区 - 局部变量、函数参数
-            堆区 - 动态内存分配
-			静态区 - 静态变量、全局变量
-
-  栈区使用习惯：先使用高地址空间，再使用低地址空间！
-  数组：随着下标的增长，地址空间是由低到高变化的！
-
-  程序运行时，先产生i压入栈中，再产生数组
-  arr[12] <==> *(arr + 12) 
-
-*/
-
-int main()
-{
-	int i = 0;
-	int arr[10] = { 1,2,3,4,5,6,7,8,9,10 };
-
-	// 0-9 越界访问
-	// 陷入死循环：i的地址与arr[12]地址一样，当循环到i=12时，会将i的值置为0，因此永远跳不出循环
-	// 可以调试一下看看
-	for (i = 0; i <= 12; i++)
-	{
-		arr[i] = 0;
-		printf("hehe\n");
-	}
-
-	return 0;
-}
+> 数组类型
+> 结构体类型 struct
+> 枚举类型 enum
+> 联合类型 union  
 ```
 
-### 关于代码优化
+#### 指针类型
 
 ```c
-// 关于代码优化
-// 字符串拷贝函数优化
-char* my_strcpy(char* dest, const char* src)
-{
-	/*while (*src != '\0')
-	{
-		*dest = *src;
-		dest++;
-		src++;
-	}
-	*dest = *src;*/
-
-	// 上面代码的高端写法
-	char* ret = dest; // 记录起始位置
-	assert(dest != NULL); // 断言，如果括号里的表达式满足，程序运行时会反馈
-	assert(src != NULL); 
-
-	while (*dest++ = *src++)
-	{
-		;
-	}
-	return ret;
-}
-
-int main()
-{
-	char arr1[] = "hello";
-	char arr2[20] = { 0 };
-	
-	/*char* p = NULL; // 这两行用来测试assert
-    my_strcpy(p, arr1);*/
-
-	printf("%s\n", my_strcpy(arr2, arr1));
-
-	return 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-// 求字符串长度的高端代码
-
-int my_strlen(const char* str) // 位置1
-{
-	int count = 0;
-	assert(str != NULL); // 位置2
-
-	while (*str != '\0')
-	{
-		count++;
-		str++;
-	}
-	return count;
-}
-
-int main()
-{
-	char arr[] = "abc";
-	int len = my_strlen("abc");
-	printf("%d", len);
-
-	return 0;
-}
+int *pi;
+char *pc;
+float* pf;
+void* pv;  
 ```
 
+#### 空类型
+
+- void 表示空类型（无类型）
+- 通常应用于函数的返回类型、函数的参数、指针类型  
+
+### 数据在内存中的存储
+
+> C语言中，数据以二进制存储在内存中，VS编译器为了方便，以十六进制展示数据
+
+> 原码 - 有符号数，直接根据正负直观地写出二进制序列
+>
+> 反码 - 原码的符号位不变，其他为按位取反  
+>
+> 补码 - 反码的二进制的最低位+1
+>
+> **注意：正数就是正数，不存在反码和补码，反码补码的概念提出是为了解决减法问题的**
+
+### 类型的范围
+
+- char   [-128,127]  1000 0000表示-128
+- unsigned char   [0,255]
+
+- ......
